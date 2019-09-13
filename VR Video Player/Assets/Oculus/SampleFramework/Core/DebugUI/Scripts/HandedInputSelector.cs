@@ -16,8 +16,39 @@ using System;
 
 public class HandedInputSelector : MonoBehaviour
 {
+    [SerializeField]
+    OvrAvatar localAvatar;
     OVRCameraRig m_CameraRig;
     OVRInputModule m_InputModule;
+
+    private Transform avatarLeftHand;
+    private Transform avatarRightHand;
+
+    private Transform AvatarLeftHand
+    {
+        get
+        {
+            if (!this.avatarLeftHand)
+            {
+                this.avatarLeftHand = this.localAvatar?.GetHandTransform(OvrAvatar.HandType.Left, OvrAvatar.HandJoint.HandBase);
+            }
+
+            return this.avatarLeftHand;
+        }
+    }
+
+    private Transform AvatarRightHand
+    {
+        get
+        {
+            if (!this.avatarRightHand)
+            {
+                this.avatarRightHand = this.localAvatar?.GetHandTransform(OvrAvatar.HandType.Right, OvrAvatar.HandJoint.HandBase);
+            }
+
+            return this.avatarRightHand;
+        }
+    }
 
     void Start()
     {
@@ -43,12 +74,13 @@ public class HandedInputSelector : MonoBehaviour
         Transform t;
         if(c == OVRInput.Controller.LTouch)
         {
-            t = m_CameraRig.leftHandAnchor;
+            t = this.AvatarLeftHand ?? m_CameraRig.leftHandAnchor;
         }
         else
         {
-            t = m_CameraRig.rightHandAnchor;
+            t = this.AvatarRightHand ?? m_CameraRig.rightHandAnchor;
         }
+
         m_InputModule.rayTransform = t;
     }
 }
