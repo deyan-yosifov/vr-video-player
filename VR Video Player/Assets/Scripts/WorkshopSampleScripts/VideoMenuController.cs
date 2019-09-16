@@ -1,10 +1,10 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
-namespace DemoScripts
-{    public class VideoMenuController : MonoBehaviour
+namespace WorkshopSampleScripts
+{
+    public class VideoMenuController : MonoBehaviour
     {
         public VideoPlayer videoPlayer;
         public Text playPauseText;
@@ -16,25 +16,21 @@ namespace DemoScripts
         private int lastSliderValue;
         private bool isMenuVisible;
 
-        public void OnPlayPausePressed()
-        {            
-            if (this.videoPlayer.isPlaying)
-            {
-                this.videoPlayer.Pause();
-            }
-            else
-            {
-                this.videoPlayer.Play();
-            }
-
-            this.UpdatePlayPauseText();
+        public void UpdatePlayPauseText()
+        {
+            this.playPauseText.text = this.videoPlayer.isPlaying ? "Pause" : "Play";
         }
 
-        public void OnStopButtonPressed()
+        public void UpdateSliderValueText()
         {
-            this.videoPlayer.Stop();
-            this.UpdatePlayPauseText();
-            this.UpdateSliderValueText();
+            int time = (int)this.videoPlayer.time;
+
+            if (this.lastSliderValue != time)
+            {
+                this.lastSliderValue = time;
+                this.slider.value = time;
+                this.sliderValueText.text = time + " s";
+            }
         }
 
         public void OnSliderValueChanged(float value)
@@ -94,20 +90,11 @@ namespace DemoScripts
             }
         }
 
-        private void UpdatePlayPauseText()
+        private void CheckKeyboardCommands()
         {
-            this.playPauseText.text = this.videoPlayer.isPlaying ? "Pause" : "Play";
-        }
-
-        private void UpdateSliderValueText()
-        {
-            int time = (int)this.videoPlayer.time;
-
-            if (this.lastSliderValue != time)
+            if (Input.GetKeyDown(KeyCode.M))
             {
-                this.lastSliderValue = time;
-                this.slider.value = time;
-                this.sliderValueText.text = time + " s";
+                this.ChangeMenuVisibility();
             }
         }
 
@@ -118,42 +105,6 @@ namespace DemoScripts
             if (isBackButtonPressed)
             {
                 this.ChangeMenuVisibility();
-            }
-        }
-
-        private void CheckKeyboardCommands()
-        {
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                this.OnPlayPausePressed();
-            }
-
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                this.OnStopButtonPressed();
-            }
-
-            if (Input.GetKeyDown(KeyCode.M))
-            {
-                this.ChangeMenuVisibility();
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                float smallerValue = this.slider.value - 1;
-                if (smallerValue >= this.slider.minValue)
-                {
-                    this.slider.value = smallerValue;
-                }
-            }
-
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                float biggerValue = this.slider.value + 1;
-                if (biggerValue <= this.slider.maxValue)
-                {
-                    this.slider.value = biggerValue;
-                }
             }
         }
     }
